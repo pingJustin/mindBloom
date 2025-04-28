@@ -1,9 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyles = createGlobalStyle`
-  /* Import Google Fonts */
-  @import url('https://fonts.googleapis.com/css2?family=Lora&family=Quicksand:wght@400;600&display=swap');
-
   *,
   *::before,
   *::after {

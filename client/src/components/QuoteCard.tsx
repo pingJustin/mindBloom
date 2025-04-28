@@ -18,7 +18,7 @@ const QuoteCard: React.FC = () => {
   const [quote, setQuote] = useState<Quote>({ q: '', a: '' });
 
   useEffect(() => {
-    fetch('https://zenquotes.io/api/random')
+    fetch('/api/quote')
       .then((res) => res.json())
       .then((data) => {
         if (data && data.length > 0) {
