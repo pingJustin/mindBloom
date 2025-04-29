@@ -1,30 +1,23 @@
-import { Schema, type Document } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
 
 export interface EntryDocument extends Document {
   entryId: string;
   content: string;
   mood: string;
+  email: string;
   date: Date;
 }
    
 
 // This is a subdocument schema, it won't become its own model but we'll use it as the schema for the User's `savedEntries` array in User.js
-const entrySchema = new Schema<EntryDocument>({
- 
-entryId: {
-    type: String,
-    required: true,
-  },
-  content: {
-    type: String,
-  },
-  mood: {
-    type: String,
-  },
-  date: {
-    type: Date,
-    required: true,
-  },
+const EntrySchema = new Schema<EntryDocument>({
+  entryId: String,
+  date: String,
+  email: String,
+  content: { type: String, default: null },
+  mood: { type: String, default: null },
 });
 
-export default entrySchema;
+ 
+const Entry = model<EntryDocument>('Entry', EntrySchema);
+export default Entry;
