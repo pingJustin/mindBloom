@@ -29,7 +29,7 @@ const Button = styled.button`
 `;
 
 const Signup: React.FC = () => {
-  const [formData, setFormData] = useState({ username: '', email: '', password: '' });
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const { setAuth } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -48,7 +48,6 @@ const Signup: React.FC = () => {
   return (
     <FormContainer>
       <h2>Sign Up</h2>
-      <Input placeholder="Username" onChange={(e) => setFormData({ ...formData, username: e.target.value })} />
       <Input type="email" placeholder="Email" onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
       <Input type="password" placeholder="Password" onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
       <Button onClick={handleSubmit}>Create Account</Button>
