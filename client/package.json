@@ -8,19 +8,19 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@apollo/client": "^3.7.14",
         "axios": "^1.6.8",
+        "bootstrap": "^5.2.3",
+        "crypto-js": "^4.2.0",
         "dayjs": "^1.11.10",
         "framer-motion": "^10.16.3",
+        "graphql": "^16.6.0",
+        "jwt-decode": "^4.0.0",
         "mongoose": "^8.14.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-router-dom": "^6.22.3",
-        "styled-components": "^6.1.1",
-        "@apollo/client": "^3.7.14",
-        "bootstrap": "^5.2.3",
-        "crypto-js": "^4.2.0",
-        "graphql": "^16.6.0",
-        "jwt-decode": "^4.0.0"
+        "styled-components": "^6.1.1"
     },
     "devDependencies": {
         "@types/mongoose": "^5.11.96",
@@ -28,11 +28,11 @@
         "@types/react": "^18.2.55",
         "@types/react-dom": "^18.2.17",
         "@vitejs/plugin-react": "^4.2.1",
-        "typescript": "^5.3.3",
-        "vite": "^5.2.8",
         "eslint": "^8.38.0",
         "eslint-plugin-react": "^7.32.2",
         "eslint-plugin-react-hooks": "^4.6.0",
-        "eslint-plugin-react-refresh": "^0.3.4"
+        "eslint-plugin-react-refresh": "^0.3.4",
+        "typescript": "^5.3.3",
+        "vite": "^6.3.3"
     }
 }
