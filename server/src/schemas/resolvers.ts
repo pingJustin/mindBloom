@@ -6,10 +6,10 @@ import { IUser } from '../models/User.js';
  
 
 interface AddUserArgs {
-   
-    email: string;
-    password: string;
-  }
+  username?: string;
+  email: string;
+  password: string;
+}
  
 interface AddEntryArgs {
  entryData: {

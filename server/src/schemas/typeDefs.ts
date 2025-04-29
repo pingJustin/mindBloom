@@ -2,15 +2,16 @@ import { gql } from 'apollo-server-express';
 
 const typeDefs = gql`
   type Entry {
-    entryId: String!
+    _id: ID!
     content: String
     mood: String
     date: String
+    email: String
   }
   
-
   type User {
     _id: ID
+    username: String
     email: String
     entries: [Entry]
   }
@@ -21,11 +22,11 @@ const typeDefs = gql`
   }
 
   input EntryInput {
-    entryId: String!
     content: String
     mood: String
     date: String
-    }
+    email: String
+  }
    
   type Query {
     me: User
@@ -33,9 +34,9 @@ const typeDefs = gql`
 
   type Mutation {
     login(email: String!, password: String!): Auth
-    addUser( email: String!, password: String!): Auth
+    addUser(username: String, email: String!, password: String!): Auth
     addEntry(entryData: EntryInput!): User
-    removeEntry(entryId: String!): User
+    removeEntry(entryId: ID!): User
   }
 `;
 
