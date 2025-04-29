@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 // Define an interface for the User document
 export interface IUser extends Document {
   _id: string;
+  username?: string; // Added username as optional for backward compatibility
   email: string;
   password:string;
   entries: ObjectId[];
@@ -14,7 +15,12 @@ export interface IUser extends Document {
 // Define the schema for the User document
 const userSchema = new Schema<IUser>(
   {
- 
+    username: {
+      type: String,
+      required: false, // Set to true if you want to require username
+      unique: false,
+      trim: true,
+    },
     email: {
       type: String,
       required: true,
