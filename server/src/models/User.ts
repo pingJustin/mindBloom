@@ -1,13 +1,13 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model, Document, ObjectId } from 'mongoose';
 import bcrypt from 'bcrypt';
-import entrySchema from './Entry.js';
+ 
 
 // Define an interface for the User document
 export interface IUser extends Document {
   _id: string;
   email: string;
   password:string;
-  entries: string[];
+  entries: ObjectId[];
   isCorrectPassword(password: string): Promise<boolean>;
 }
 
@@ -26,9 +26,13 @@ const userSchema = new Schema<IUser>(
       required: true,
       minlength: 5,
     },
-    entries: [ entrySchema
-      
-    ],
+    entries: [ 
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Entry',
+      }
+    ],    
+     
   },
   {
     timestamps: true,
