@@ -1,10 +1,22 @@
-import React, { useEffect, useState } from 'react';
+// export default ViewPastEntries;
+import React from 'react';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 import { motion } from 'framer-motion';
-import api from '../utils/api';
+import { gql, useQuery } from '@apollo/client';
 
-interface JournalEntry {
+const GET_ENTRIES = gql`
+  query GetEntries($email: String!) {
+    entriesByEmail(email: $email) {
+      _id
+      content
+      mood
+      date
+    }
+  }
+`;
+
+interface Entry {
   _id: string;
   content: string;
   mood?: string;
@@ -21,7 +33,7 @@ const EntryCard = styled(motion.div)<{ mood?: string }>`
   border-radius: 10px;
   padding: 1rem;
   margin-bottom: 1.25rem;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 `;
 
 const getMoodColor = (mood?: string) => {
@@ -36,100 +48,30 @@ const getMoodColor = (mood?: string) => {
 };
 
 const ViewPastEntries: React.FC = () => {
-  const [entries, setEntries] = useState<JournalEntry[]>([]);
-  const [editingEntry, setEditingEntry] = useState<JournalEntry | null>(null);
-  const [editContent, setEditContent] = useState('');
-  const [editMood, setEditMood] = useState('');
+  const email = localStorage.getItem('email'); // or use context if preferred
 
-  const fetchEntries = async () => {
-    try {
-      const res = await api.get('/journal');
-      setEntries(res.data);
-    } catch (err) {
-      console.error('Error loading journal entries:', err);
-    }
-  };
+  const { loading, error, data } = useQuery(GET_ENTRIES, {
+    variables: { email },
+    skip: !email,
+  });
 
-  useEffect(() => {
-    fetchEntries();
-  }, []);
-
-  const handleStartUpdate = (entry: JournalEntry) => {
-    setEditingEntry(entry);
-    setEditContent(entry.content);
-    setEditMood(entry.mood || '');
-  };
-
-  const handleUpdate = async () => {
-    if (!editingEntry) return;
-
-    try {
-      await api.put(`/journal/${editingEntry._id}`, {
-        content: editContent,
-        mood: editMood,
-      });
-      setEditingEntry(null);
-      fetchEntries();
-    } catch (err) {
-      console.error('Error updating journal:', err);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    if (window.confirm('Delete this entry?')) {
-      try {
-        await api.delete(`/journal/${id}`);
-        fetchEntries();
-      } catch (err) {
-        console.error('Error deleting journal:', err);
-      }
-    }
-  };
+  if (!email) return <p>Please log in to view entries.</p>;
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error loading entries.</p>;
 
   return (
     <EntryList>
-      <h2>Your Journal Entries</h2>
-      {entries.map((entry) => (
+      {data.entriesByEmail.map((entry: Entry) => (
         <EntryCard
           key={entry._id}
           mood={entry.mood}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
+          transition={{ duration: 0.2 }}
         >
-          {editingEntry?._id === entry._id ? (
-            <>
-              <textarea
-                value={editContent}
-                onChange={(e) => setEditContent(e.target.value)}
-                style={{ width: '100%', height: '100px', marginBottom: '0.5rem' }}
-              />
-              <select
-                value={editMood}
-                onChange={(e) => setEditMood(e.target.value)}
-              >
-                <option value="">Select Mood</option>
-                <option value="Happy">Happy</option>
-                <option value="Sad">Sad</option>
-                <option value="Anxious">Anxious</option>
-                <option value="Excited">Excited</option>
-                <option value="Calm">Calm</option>
-              </select>
-              <br />
-              <button onClick={handleUpdate}>Update</button>
-              <button onClick={() => setEditingEntry(null)}>Cancel</button>
-            </>
-          ) : (
-            <>
-              <p>
-                <strong>{dayjs(entry.date).format('MMM D, YYYY')}</strong>
-                {entry.mood && ` – ${entry.mood}`}
-              </p>
-              <p>{entry.content}</p>
-              <button onClick={() => handleStartUpdate(entry)}>Edit</button>
-              <button onClick={() => handleDelete(entry._id)}>Delete</button>
-            </>
-          )}
+          <strong>{dayjs(entry.date).format('MMM D, YYYY')}</strong>
+          <p><em>{entry.mood}</em></p>
+          <p>{entry.content}</p>
         </EntryCard>
       ))}
     </EntryList>

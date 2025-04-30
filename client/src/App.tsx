@@ -1,43 +1,27 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+// export default App;
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { Outlet } from 'react-router-dom';
 
-import { AuthProvider } from './context/AuthContext';
-import GlobalStyles from './styles/GlobalStyles';
+import NavBar from './components/NavBar'; // Replace with your header if different
+import Footer from './components/Footer'; // Create if missing
 
-import NavBar from './components/NavBar';
-import Dashboard from './pages/Dashboard';
-import Journal from './pages/PastEntries';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import PrivateRoute from './components/PrivateRoute';
+const client = new ApolloClient({
+  uri: '/graphql', // Backend GraphQL endpoint
+  cache: new InMemoryCache(),
+});
 
-const App: React.FC = () => {
+function App() {
   return (
-    <AuthProvider>
-      <GlobalStyles />
-      <NavBar />
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/journal"
-          element={
-            <PrivateRoute>
-              <Journal />
-            </PrivateRoute>
-          }
-        />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-      </Routes>
-    </AuthProvider>
+    <ApolloProvider client={client}>
+      <div className="app-container">
+        <NavBar />
+        <main>
+          <Outlet />
+        </main>
+        <Footer />
+      </div>
+    </ApolloProvider>
   );
-};
+}
 
 export default App;

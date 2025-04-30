@@ -1,42 +1,30 @@
-import { gql } from 'apollo-server-express';
-
-const typeDefs = gql`
+const typeDefs = `#graphql
   type Entry {
     _id: ID!
     content: String
     mood: String
-    date: String
     email: String
+    date: String
   }
-  
+
   type User {
-    _id: ID
-    username: String
-    email: String
-    entries: [Entry]
+    id: ID!
+    email: String!
   }
 
-  type Auth {
-    token: ID!
-    user: User
+  type AuthPayload {
+    token: String!
+    user: User!
   }
 
-  input EntryInput {
-    content: String
-    mood: String
-    date: String
-    email: String
-  }
-   
   type Query {
-    me: User
+    allEntries: [Entry]
+    entriesByEmail(email: String!): [Entry]
   }
 
   type Mutation {
-    login(email: String!, password: String!): Auth
-    addUser(username: String, email: String!, password: String!): Auth
-    addEntry(entryData: EntryInput!): User
-    removeEntry(entryId: ID!): User
+    addEntry(content: String, mood: String, email: String!): Entry
+    signup(email: String!, password: String!): AuthPayload!
   }
 `;
 

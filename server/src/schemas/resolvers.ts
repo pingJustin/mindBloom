@@ -1,90 +1,80 @@
-//used code from module 18 #25
+// import Entry from '../models/Entry.js';
 
-import {User} from '../models/index.js';
-import { signToken, AuthenticationError } from '../utils/auth.js';
-import { IUser } from '../models/User.js'; 
- 
+// const resolvers = {
+//   Query: {
+//     allEntries: async () => {
+//       return await Entry.find().sort({ date: -1 });
+//     },
+//     entriesByEmail: async (_: unknown, { email }: { email: string }) => {
+//       return await Entry.find({ email }).sort({ date: -1 });
+//     },
+//   },
 
-interface AddUserArgs {
-  username?: string;
-  email: string;
-  password: string;
-}
- 
-interface AddEntryArgs {
- entryData: {
-    entryId: string; 
-    content: string;
-    mood: string;   
-    date: string;
-    };
- 
-}
+//   Mutation: {
+//     addEntry: async (
+//       _: unknown,
+//       { content, mood, email }: { content?: string; mood?: string; email: string }
+//     ) => {
+//       return await Entry.create({
+//         content: content || null,
+//         mood: mood || null,
+//         email,
+//         date: new Date().toISOString(),
+//       });
+//     },
+//   },
+// };
 
-interface RemoveEntryArgs {
- 
-  entryId: string;
-}
-
-interface Context {
-  user?:  IUser;
-}
+// export default resolvers;
+// src/schemas/resolvers.ts
+import Entry from '../models/Entry.js';
+import User from '../models/User.js';
+import bcrypt from 'bcrypt';
+import { signToken } from '../services/auth.js';
 
 const resolvers = {
   Query: {
-  
-    me: async (_parent: any, _args: any, context: Context): Promise<IUser | null> => {
-      console.log('context', context.user);
-      if (context.user) {
-        return await User.findOne({ _id: context.user._id }).select('-__v -password');
-      }
-      throw AuthenticationError;
+    allEntries: async () => {
+      return await Entry.find().sort({ date: -1 });
+    },
+    entriesByEmail: async (_: unknown, { email }: { email: string }) => {
+      return await Entry.find({ email }).sort({ date: -1 });
     },
   },
+
   Mutation: {
-    addUser: async (_parent: any, args: AddUserArgs): Promise<{ token: string; user: IUser }> => {
-      const user = await User.create({ ...args });
-      const token = signToken( user.email, user._id);
-      return { token, user };
+    addEntry: async (
+      _: unknown,
+      { content, mood, email }: { content?: string; mood?: string; email: string }
+    ) => {
+      return await Entry.create({
+        content: content || null,
+        mood: mood || null,
+        email,
+        date: new Date().toISOString(),
+      });
     },
-    login: async (_parent: any, { email, password }: { email: string; password: string }): Promise<{ token: string; user: IUser }> => {
-      const user = await User.findOne({ email });
-      if (!user) {
-        throw AuthenticationError;
+
+    signup: async (
+      _: unknown,
+      { email, password }: { email: string; password: string }
+    ) => {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        throw new Error('User already exists');
       }
-      const correctPw = await user.isCorrectPassword(password);
-      if (!correctPw) {
-        throw AuthenticationError;
-      }
-      const token = signToken( user.email, user._id);
-      return { token, user };
-    },
-    addEntry: async (_parent: any, {entryData }: AddEntryArgs, context: Context): Promise<IUser | null> => {
-      if (context.user) {
-        return await User.findOneAndUpdate(
-          { _id: context.user._id },
-          {
-            $addToSet: { entries: entryData },
-          },
-          {
-            new: true,
-            runValidators: true,
-          }
-        );
-      }
-      throw AuthenticationError;
-    },
-   
-    removeEntry: async (_parent: any, { entryId}: RemoveEntryArgs, context: Context): Promise<IUser| null> => {
-      if (context.user) {
-        console.log('context.user._id', context.user._id, entryId);
-        return await User.findOneAndUpdate(
-          { _id: context.user._id },
-          { $pull: { entries: {entryId} } },
-          { new: true }
-        );
-      }
-      throw AuthenticationError;
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = await User.create({ email, password: hashedPassword });
+      const token = signToken(newUser.email, newUser._id);
+
+      return {
+        token,
+        user: {
+          id: newUser._id,
+          email: newUser.email,
+        },
+      };
     },
   },
 };

@@ -10,26 +10,27 @@ interface JwtPayload {
   email: string,
 }
 
-export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers.authorization;
+import jwt from 'jsonwebtoken';
 
-  if (authHeader) {
-    const token = authHeader.split(' ')[1];
+const SECRET_KEY = process.env.JWT_SECRET || 'your_default_dev_secret';
 
-    const secretKey = process.env.JWT_SECRET_KEY || '';
+export function authenticateToken({ req }: { req: any }) {
+  const authHeader = req?.headers?.authorization || '';
+  const token = authHeader.split(' ')[1]; // Bearer <token>
 
-    jwt.verify(token, secretKey, (err, user) => {
-      if (err) {
-        return res.sendStatus(403); // Forbidden
-      }
+  let user = null;
 
-      req.user = user as JwtPayload;
-      return next();
-    });
-  } else {
-    res.sendStatus(401); // Unauthorized
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, SECRET_KEY);
+      user = decoded;
+    } catch (err) {
+      console.warn('Invalid or expired token');
+    }
   }
-};
+
+  return { user }; // This is your GraphQL context
+}
 
 export const signToken = ( email: string, _id: unknown) => {
   const payload = { email, _id };
