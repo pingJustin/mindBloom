@@ -1,6 +1,7 @@
+// export default JournalEntry;
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import api from '../utils/api';
+import { gql, useMutation } from '@apollo/client';
 
 const EntryForm = styled.div`
   margin-top: 2rem;
@@ -23,17 +24,37 @@ const SubmitButton = styled.button`
   cursor: pointer;
 `;
 
+const ADD_ENTRY = gql`
+  mutation AddEntry($content: String, $mood: String, $email: String!) {
+    addEntry(content: $content, mood: $mood, email: $email) {
+      _id
+      content
+      mood
+      date
+    }
+  }
+`;
+
 interface Props {
   mood: string;
 }
 
 const JournalEntry: React.FC<Props> = ({ mood }) => {
   const [content, setContent] = useState<string>('');
+  const email = localStorage.getItem('email'); // or use from context if preferred
+
+  const [addEntry, { loading, error }] = useMutation(ADD_ENTRY);
 
   const handleSubmit = async () => {
-    if (!content.trim()) return;
+    if (!content.trim() || !email) return;
     try {
-      await api.post('/journal', { content, mood });
+      await addEntry({
+        variables: {
+          content,
+          mood,
+          email,
+        },
+      });
       setContent('');
       alert('Entry submitted!');
     } catch (err) {
@@ -47,9 +68,12 @@ const JournalEntry: React.FC<Props> = ({ mood }) => {
       <TextArea
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder="Today I felt..."
+        placeholder="Today I..."
       />
-      <SubmitButton onClick={handleSubmit}>Submit Entry</SubmitButton>
+      <SubmitButton onClick={handleSubmit} disabled={loading}>
+        {loading ? 'Submitting...' : 'Submit Entry'}
+      </SubmitButton>
+      {error && <p style={{ color: 'red' }}>Submission failed. Try again.</p>}
     </EntryForm>
   );
 };

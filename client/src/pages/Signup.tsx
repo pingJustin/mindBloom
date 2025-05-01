@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
-import api from '../utils/api';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@apollo/client';
+import { SIGNUP_USER } from '../graphql/mutations';
 import { AuthContext } from '../context/AuthContext';
 
 const FormContainer = styled.div`
@@ -32,25 +33,49 @@ const Signup: React.FC = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const { setAuth } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [signup, { loading, error }] = useMutation(SIGNUP_USER);
 
-  const handleSubmit = async () => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      const { data } = await api.post('/auth/signup', formData);
-      localStorage.setItem('token', data.token);
-      setAuth({ token: data.token, isAuthenticated: true });
+      const { data } = await signup({ variables: formData });
+      localStorage.setItem('token', data.signup.token);
+      localStorage.setItem('user', JSON.stringify(data.signup.user));
+      setAuth({ token: data.signup.token, user: data.signup.user });
       navigate('/');
     } catch (err) {
-      alert('Signup failed.');
-      console.error(err);
+      console.error('Signup failed:', err);
     }
   };
 
   return (
     <FormContainer>
-      <h2>Sign Up</h2>
-      <Input type="email" placeholder="Email" onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
-      <Input type="password" placeholder="Password" onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
-      <Button onClick={handleSubmit}>Create Account</Button>
+      <form onSubmit={handleSubmit}>
+        <Input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+        <Input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
+        <Button type="submit" disabled={loading}>
+          {loading ? 'Signing up...' : 'Sign Up'}
+        </Button>
+        {error && <p style={{ color: 'red' }}>{error.message}</p>}
+      </form>
     </FormContainer>
   );
 };

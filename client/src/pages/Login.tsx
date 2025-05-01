@@ -1,7 +1,9 @@
+// src/pages/Login.tsx
 import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
-import api from '../utils/api';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@apollo/client';
+import { LOGIN_USER } from '../graphql/mutations';
 import { AuthContext } from '../context/AuthContext';
 
 const FormContainer = styled.div`
@@ -21,7 +23,7 @@ const Input = styled.input`
 const Button = styled.button`
   width: 100%;
   padding: 0.75rem;
-  background: #b9d8c2;
+  background: #a6c4a3;
   border: none;
   border-radius: 6px;
   font-weight: bold;
@@ -29,29 +31,52 @@ const Button = styled.button`
 `;
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const { setAuth } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [login, { loading, error }] = useMutation(LOGIN_USER);
 
-  const handleSubmit = async () => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      const { data } = await api.post('/auth/login', { email, password });
-      localStorage.setItem('token', data.token);
-      setAuth({ token: data.token, isAuthenticated: true });
+      const { data } = await login({ variables: formData });
+      localStorage.setItem('token', data.login.token);
+      localStorage.setItem('user', JSON.stringify(data.login.user));
+      setAuth({ token: data.login.token, user: data.login.user });
       navigate('/');
     } catch (err) {
-      alert('Invalid login credentials');
-      console.error(err);
+      console.error('Login failed:', err);
     }
   };
 
   return (
     <FormContainer>
-      <h2>Login</h2>
-      <Input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
-      <Input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
-      <Button onClick={handleSubmit}>Log In</Button>
+      <form onSubmit={handleSubmit}>
+        <Input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+        <Input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
+        <Button type="submit" disabled={loading}>
+          {loading ? 'Logging in...' : 'Log In'}
+        </Button>
+        {error && <p style={{ color: 'red' }}>{error.message}</p>}
+      </form>
     </FormContainer>
   );
 };

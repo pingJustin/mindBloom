@@ -1,14 +1,27 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App'; 
-import { BrowserRouter } from 'react-router-dom';
-import GlobalStyles from './styles/GlobalStyles'; 
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <BrowserRouter>
-        <GlobalStyles />
-      <App />
-    </BrowserRouter>
-  </React.StrictMode>
+import App from './App';
+import Dashboard from './pages/Dashboard';
+import Journal from './pages/PastEntries';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <App />,
+    errorElement: <Error />,
+    children: [
+      { index: true, element: <Dashboard /> },
+      { path: 'journal', element: <Journal /> },
+      { path: 'login', element: <Login /> },
+      { path: 'signup', element: <Signup /> },
+    ],
+  },
+]);
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <RouterProvider router={router} />
 );

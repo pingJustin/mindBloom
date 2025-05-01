@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect, ReactNode } from 'react';
 
 interface AuthState {
   token: string | null;
+  email: string | null;
   isAuthenticated: boolean;
 }
 
@@ -12,7 +13,7 @@ interface AuthContextType {
 }
 
 export const AuthContext = createContext<AuthContextType>({
-  auth: { token: null, isAuthenticated: false },
+  auth: { token: null, email: null, isAuthenticated: false },
   setAuth: () => {},
   logout: () => {},
 });
@@ -24,20 +25,24 @@ interface Props {
 export const AuthProvider: React.FC<Props> = ({ children }) => {
   const [auth, setAuth] = useState<AuthState>({
     token: localStorage.getItem('token'),
+    email: localStorage.getItem('email'),
     isAuthenticated: !!localStorage.getItem('token'),
   });
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
+    const storedEmail = localStorage.getItem('email');
     setAuth({
       token: storedToken,
+      email: storedEmail,
       isAuthenticated: !!storedToken,
     });
   }, []);
 
   const logout = () => {
     localStorage.removeItem('token');
-    setAuth({ token: null, isAuthenticated: false });
+    localStorage.removeItem('email');
+    setAuth({ token: null, email: null, isAuthenticated: false });
   };
 
   return (
