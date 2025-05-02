@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const SECRET_KEY = process.env.JWT_SECRET || 'your_default_dev_secret';
+const SECRET_KEY = process.env.JWT_SECRET_KEY || 'your_default_dev_secret';
 
 export function authenticateToken({ req }: { req: any }) {
   const authHeader = req?.headers?.authorization || '';

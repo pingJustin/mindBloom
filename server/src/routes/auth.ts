@@ -18,10 +18,10 @@ router.post('/signup', async (req, res) => {
 
     const token = signToken(newUser.email, newUser._id);
 
-    res.status(201).json({ token, user: { id: newUser._id, email: newUser.email } });
+    return res.status(201).json({ token, user: { id: newUser._id, email: newUser.email } });
   } catch (error) {
     console.error('Signup Error:', error);
-    res.status(500).json({ message: 'Server error during signup' });
+    return res.status(500).json({ message: 'Server error during signup' });
   }
 });
 
@@ -37,10 +37,10 @@ router.post('/login', async (req, res) => {
 
     const token = signToken(user.email, user._id);
 
-    res.status(200).json({ token, user: { id: user._id, email: user.email } });
+    return res.status(200).json({ token, user: { id: user._id, email: user.email } });
   } catch (error) {
     console.error('Login Error:', error);
-    res.status(500).json({ message: 'Server error during login' });
+    return res.status(500).json({ message: 'Server error during login' });
   }
 });
 
