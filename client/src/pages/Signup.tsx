@@ -44,8 +44,11 @@ const Signup: React.FC = () => {
     try {
       const { data } = await signup({ variables: formData });
       localStorage.setItem('token', data.signup.token);
-      localStorage.setItem('user', JSON.stringify(data.signup.user));
-      setAuth({ token: data.signup.token, user: data.signup.user });
+      localStorage.setItem('email', data.signup.user.email);
+      setAuth({
+        token: data.signup.token, email: data.signup.user.email,
+        isAuthenticated: false
+      });
       navigate('/');
     } catch (err) {
       console.error('Signup failed:', err);

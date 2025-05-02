@@ -27,7 +27,7 @@ export const LOGIN_USER = gql`
 
 export const ADD_JOURNAL_ENTRY = gql`
   mutation AddJournalEntry($content: String!, $mood: String!) {
-    addJournalEntry(content: $content, mood: $mood) {
+    addJournalEntry(content: $content, mood: $mood, email: $email) {
       _id
       content
       mood

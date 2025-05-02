@@ -1,16 +1,7 @@
-import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
 import dotenv from 'dotenv';
 dotenv.config();
-
-interface JwtPayload {
-  _id: unknown;
-  username: string;
-  email: string,
-}
-
-import jwt from 'jsonwebtoken';
 
 const SECRET_KEY = process.env.JWT_SECRET || 'your_default_dev_secret';
 
@@ -35,6 +26,7 @@ export function authenticateToken({ req }: { req: any }) {
 export const signToken = ( email: string, _id: unknown) => {
   const payload = { email, _id };
   const secretKey = process.env.JWT_SECRET_KEY || '';
+  console.log('secretKey', secretKey);
 
-  return jwt.sign(payload, secretKey, { expiresIn: '1h' });
+  return jwt.sign(payload, secretKey, { expiresIn: '24h' });
 };
