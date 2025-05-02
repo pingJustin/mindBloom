@@ -69,7 +69,7 @@ const ViewPastEntries: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2 }}
         >
-          <strong>{dayjs(entry.date).format('MMM D, YYYY')}</strong>
+          <strong>{dayjs().format('MMM D, YYYY')}</strong>
           <p><em>{entry.mood}</em></p>
           <p>{entry.content}</p>
         </EntryCard>

@@ -45,8 +45,11 @@ const Login: React.FC = () => {
     try {
       const { data } = await login({ variables: formData });
       localStorage.setItem('token', data.login.token);
-      localStorage.setItem('user', JSON.stringify(data.login.user));
-      setAuth({ token: data.login.token, user: data.login.user });
+      localStorage.setItem('email', data.login.user.email);
+      setAuth({
+        token: data.login.token, email: data.login.user.email,
+        isAuthenticated: false
+      });
       navigate('/');
     } catch (err) {
       console.error('Login failed:', err);

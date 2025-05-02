@@ -25,6 +25,7 @@ const typeDefs = `#graphql
   type Mutation {
     addEntry(content: String, mood: String, email: String!): Entry
     signup(email: String!, password: String!): AuthPayload!
+    login(email: String!, password: String!): AuthPayload!
   }
 `;
 

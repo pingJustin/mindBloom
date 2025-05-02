@@ -15,7 +15,7 @@ export const GET_JOURNAL_ENTRIES = gql`
       _id
       content
       mood
-      createdAt
+      date
     }
   }
 `;
