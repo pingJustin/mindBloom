@@ -12,7 +12,7 @@ MindBloom is a daily wellness journal application which allows users to share th
 GitHub Link  https://github.com/pingJustin/mindBloom
 Render Link  https://mindbloom-bvk5.onrender.com/
 
-1) Clone this repo onto your local computer using 'git clone'. 2) Make sure you install all the necessary dependencies by running 'npm i' in the terminal. 3) Build the application using 'npm run build'  4) Start the API by running 'npm run develop'
+1) Clone this repo onto your local computer using 'git clone'. 2) Make sure you install all the necessary dependencies by running 'npm i' in the terminal. 3) Build the application using 'npm run build'  4) Start the API by running 'cd client; npm run develop'
 ## Usage
 In order to use this application, after typing 'npm run develop' , open MongoDB to see the mindBloom database with the users and entries collections.   
 
@@ -28,16 +28,20 @@ Queries:  GET_QUOTE, GET_JOURNAL_ENTRIES
 ## License
 This project is licensed under the MIT license. [MIT](https://opensource.org/licenses/MIT)
 ## Contributing
-We owe many thanks to the following tutors for their assistance: .  Additionally, thanks to Dan M. for his assistance. Copilot was used for code suggestions and debugging.
+We owe many thanks to the following tutors for their assistance: Alexis, Quentin, Andrea .  Additionally, thanks to Dan M. for his assistance. Copilot was used for code suggestions and debugging.
 ## Tests
 In order to test the application, 
 ## Questions
 To reach us with additional questions please contact us at:
 
+pingjustin@gmail.com
+GitHub: https://github.com/pingjustin
 
+wardmeg1998@gmail.com
+GitHub: https://github.com/mward70
 
 perezteri@hotmail.com  
-GitHub : [pebbsmom](https://github.com/pebbsmom)
+GitHub: https://github.com/pebbsmom
 
 
  
