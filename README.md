@@ -18,8 +18,7 @@ In order to use this application, after typing 'npm run develop' , open MongoDB 
 
 Walkthrough Video
 
-
-Walkthrough video goes here
+https://drive.google.com/file/d/1-MAyy9yWuw3spNMrkRe_uUIToSpUlmLk/view?usp=sharing
 
 Mutations: SIGNUP_USER, LOGIN_USER,ADD_JOURNAL_ENTRY
 Queries:  GET_QUOTE, GET_JOURNAL_ENTRIES
